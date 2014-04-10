@@ -30,19 +30,10 @@ class Megapede(yapsy.IPlugin.IPlugin):
 
     score_reader = FileReader([
         ("name", "10s"),
-        ("padding", "x"),
+        ("padding", "x"), # Unknown meaning. Issue #1.
         ("score", "I"),
         ("level", "B"),
         ])
-
-    fmt = (
-        "<" +   # little-endian
-        "10s"   # name 1
-        "x"     # unknown
-        "I"     # score 1
-        "B"     # level 1
-        * 10    # scores 2-10
-    )
 
     @staticmethod
     def export(path, format="html"):
@@ -75,26 +66,6 @@ class Megapede(yapsy.IPlugin.IPlugin):
             for data in iter(lambda: scorefile.read(Megapede.score_reader.struct.size), b""):
                 scores.append(Megapede.score_reader.unpack(data))
         return scores
-
-    @staticmethod
-    def maketable(scorefile):
-        """Create a high score table as a list of namedtuples.
-
-        The layout is [(name, score, level), ...]
-
-        """
-
-        MegapedeScore = namedtuple("MegapedeScore", ["name", "score", "level"])
-        COLS = 3
-        ROWS = 10
-        table = [
-                MegapedeScore(
-                    data[i*COLS].decode("utf_8").rstrip('\0'),
-                    data[i*COLS + 1],
-                    data[i*COLS + 2])
-                for i in range(ROWS)
-                ]
-        return table
 
     @staticmethod
     def extract_resources(path):
