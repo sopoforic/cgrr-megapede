@@ -45,6 +45,9 @@ class Megapede(yapsy.IPlugin.IPlugin):
     ]
     scorefile = "MEGAPEDE.SCO"
 
+    # For details on the file format, see:
+    #
+    # https://bitbucket.org/sopoforic/cgrr/wiki/Megapede Score File Format
     score_reader = FileReader(
         format = [
             ("name", "10s"),
@@ -54,15 +57,15 @@ class Megapede(yapsy.IPlugin.IPlugin):
         ],
         massage_in = {
             "name" : (lambda s: s.decode('ascii').strip('\x00')),
-        }
+        },
         massage_out = {
             "name" : (lambda s: s.encode('ascii')),
-        }
+        },
     )
 
     @staticmethod
     def export(path, format="html"):
-        """Exports everything this class supports."""
+        """Export everything this class supports."""
         if not Megapede.verify(path):
             raise UnsupportedSoftwareException
         global env
@@ -80,12 +83,12 @@ class Megapede(yapsy.IPlugin.IPlugin):
 
     @staticmethod
     def verify(path):
-        """Verifies that the provided path is the supported game."""
+        """Verify that the provided path is the supported game."""
         return utilities.verify(Megapede.identifying_files, path)
 
     @staticmethod
     def read_scores(path):
-        """Reads score file foound in path."""
+        """Return a list of scores."""
         scores = []
         with open(os.path.join(path, Megapede.scorefile), "rb") as scorefile:
             for data in iter(lambda: scorefile.read(Megapede.score_reader.struct.size), b""):
@@ -93,24 +96,34 @@ class Megapede(yapsy.IPlugin.IPlugin):
         return scores
 
     @staticmethod
-    def extract_resources(path):
-        """Extract resources from MEGAPEDE.RES."""
-        resources = Megapede.extract_rd(path)
+    def read_resources(path):
+        """Return a dictionary containing resources from MEGAPEDE.RES.
+
+        The dictionary maps file names to file contents.
+
+        """
+        resource_list = Megapede.read_rd(path)
+        format = [
+            (resource.name, "{}s".format(resource.size))
+            for resource in sorted(resource_list, key=lambda r: r.offset)
+        ]
+        resource_reader = FileReader(format)
+        resources = None
         with open(path + "MEGAPEDE.RES", "rb") as infile:
-            for res in resources:
-                infile.seek(res.offset)
-                data = infile.read(res.size)
-                with open("extracted/" + res.name, "wb") as outfile:
-                    outfile.write(data)
+            resources = resource_reader.unpack(infile.read())
+        return resources
 
     @staticmethod
-    def extract_rd(path):
-        """"Get list of resources from MEGAPEDE.RD."""
+    def read_rd(path):
+        """"Return a list of resources from MEGAPEDE.RD."""
+        # For details on the file format, see:
+        #
+        # https://bitbucket.org/sopoforic/cgrr/wiki/Megapede RD File Format
         MegapedeResource = namedtuple("MegapedeResource", ["size", "offset", "name"])
-        resources = []
+        resource_list = []
         with open(os.path.join(path, "MEGAPEDE.RD"), "rb") as rd:
             for line in rd:
                 items = line.split()
                 res = MegapedeResource(int(items[0]), int(items[1]), items[2].decode())
-                resources.append(res)
-        return resources
+                resource_list.append(res)
+        return resource_list
