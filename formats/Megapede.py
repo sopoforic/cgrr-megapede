@@ -45,28 +45,20 @@ class Megapede(yapsy.IPlugin.IPlugin):
     ]
     scorefile = "MEGAPEDE.SCO"
 
-    massage_in = {
-        "name" : (lambda s: s.decode('ascii').strip('\x00')),
-    }
-
-    massage_out = {
-        "name" : (lambda s: s.encode('ascii')),
-    }
-
-    @staticmethod
-    def packme(dictionary):
-        b = bytearray(160)
-
-        s = Megapede.score_reader.pack(dictionary)
-
-    score_reader = FileReader([
-        ("name", "10s"),
-        ("padding", "x"), # Unknown meaning. Issue #1.
-        ("score", "I"),
-        ("level", "B"),
+    score_reader = FileReader(
+        format = [
+            ("name", "10s"),
+            ("padding", "x"), # Unknown meaning. Issue #1.
+            ("score", "I"),
+            ("level", "B"),
         ],
-        massage_in = massage_in,
-        massage_out = massage_out,)
+        massage_in = {
+            "name" : (lambda s: s.decode('ascii').strip('\x00')),
+        }
+        massage_out = {
+            "name" : (lambda s: s.encode('ascii')),
+        }
+    )
 
     @staticmethod
     def export(path, format="html"):
