@@ -37,11 +37,21 @@ class Megapede(yapsy.IPlugin.IPlugin):
     key = "cheesy_megapede_a"
     title = "Megapede"
     developer = "Cheesy Software"
-    description = "Megapede (Cheesy Software) v1.3c"
+    description = "Megapede (Cheesy Software)"
 
     identifying_files = [
-        File("MEGAPEDE.EXE", 89844,  "60de7f0f904c0edd86c6ac4069e109f6"),
-        File("MEGACORE.EXE", 126448, "fce9aa8e9937211874efdbe8d88260be"),
+        [   # Megapede v1.2
+            File("MEGAPEDE.EXE",  93328, "02b855b2afddfdec0fd7cda49d621106"),
+            File("MEGACORE.EXE", 138407, "0f96f133ade66b5fb5e0f797d74a0863"),
+        ],
+        [   # Megapede v1.3c
+            File("MEGAPEDE.EXE",  89844, "60de7f0f904c0edd86c6ac4069e109f6"),
+            File("MEGACORE.EXE", 126448, "fce9aa8e9937211874efdbe8d88260be"),
+        ],
+        [   # Megapede v2.0c
+            File("MEGAPEDE.EXE",  90182, "255a4201d87c369389749a4c8f2a3495"),
+            File("MEGACORE.EXE", 161198, "37148f640b2cefb848ad58c2a564550b"),
+        ],
     ]
     scorefile = "MEGAPEDE.SCO"
 
@@ -84,7 +94,11 @@ class Megapede(yapsy.IPlugin.IPlugin):
     @staticmethod
     def verify(path):
         """Verify that the provided path is the supported game."""
-        return utilities.verify(Megapede.identifying_files, path)
+        verified = any(
+            [utilities.verify(identifying_files, path) for identifying_files
+             in Megapede.identifying_files]
+        )
+        return verified
 
     @staticmethod
     def read_scores(path):
@@ -121,7 +135,11 @@ class Megapede(yapsy.IPlugin.IPlugin):
         # https://bitbucket.org/sopoforic/cgrr/wiki/Megapede RD File Format
         MegapedeResource = namedtuple("MegapedeResource", ["size", "offset", "name"])
         resource_list = []
-        with open(os.path.join(path, "MEGAPEDE.RD"), "rb") as rd:
+        if os.path.isfile(os.path.join(path, "MEGAPEDE.RD")):
+            filepath = os.path.join(path, "MEGAPEDE.RD")  # v1.3c
+        elif os.path.isfile(os.path.join(path, "MEGAPEDE.DIR")):
+            filepath = os.path.join(path, "MEGAPEDE.DIR") # v1.2
+        with open(filepath, "rb") as rd:
             for line in rd:
                 items = line.split()
                 res = MegapedeResource(int(items[0]), int(items[1]), items[2].decode())
