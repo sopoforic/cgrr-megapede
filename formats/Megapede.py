@@ -17,12 +17,13 @@
 # along with CGRR.  If not, see <http://www.gnu.org/licenses/>.
 """Parses Megapede data."""
 import logging
-import struct
 import os
+import struct
 from collections import namedtuple
 
 import yapsy
 from jinja2 import Environment, FileSystemLoader
+from PIL import Image
 
 import utilities
 from errors import UnsupportedSoftwareException
@@ -145,3 +146,21 @@ class Megapede(yapsy.IPlugin.IPlugin):
                 res = MegapedeResource(int(items[0]), int(items[1]), items[2].decode())
                 resource_list.append(res)
         return resource_list
+
+    @staticmethod
+    def read_palette(data):
+        """Return a palette as a dictionary from color numbers to RGB values."""
+        p = struct.unpack("768B", data)
+        palette = list(zip(*[p[i::3] for i in range(3)]))
+        return palette
+
+    @staticmethod
+    def read_image(image_data, palette_data):
+        """Return an Image matching the input data."""
+        (_, width, height) = struct.unpack("3B", image_data[:3])
+        img = Image.new('RGB', (width, height))
+        imgdata = struct.unpack("{}B".format(width*height), image_data[3:])
+        palette = read_palette(palette_data)
+        pixmap = [palette[pixel] for pixel in imgdata]
+        img.putdata(pixmap)
+        return img
