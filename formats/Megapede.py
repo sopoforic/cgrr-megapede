@@ -158,9 +158,15 @@ class Megapede(yapsy.IPlugin.IPlugin):
     def read_image(image_data, palette_data):
         """Return an Image matching the input data."""
         (_, width, height) = struct.unpack("3B", image_data[:3])
+        width *= 2
+        height *= 2
         img = Image.new('RGB', (width, height))
         imgdata = struct.unpack("{}B".format(width*height), image_data[3:])
-        palette = read_palette(palette_data)
+        palette = Megapede.read_palette(palette_data)
         pixmap = [palette[pixel] for pixel in imgdata]
+        # There should no doubt be some gamma correction done, but I don't know
+        # what value to use. 1.4 looks pretty close, but it's not perfect.
+        # 
+        # pixmap = [(int(pow(a,1.4)), int(pow(b,1.4)), int(pow(c,1.4))) for (a, b, c) in pixmap]
         img.putdata(pixmap)
         return img
