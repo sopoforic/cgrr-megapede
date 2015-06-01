@@ -53,7 +53,7 @@ scorefile = "MEGAPEDE.SCO"
 
 # For details on the file format, see:
 #
-# https://bitbucket.org/sopoforic/cgrr/wiki/Megapede Score File Format
+# https://github.com/sopoforic/cgrr-megapede/wiki/Megapede-Score-File-Format
 score_reader = FileReader(
     format = [
         ("name", "10s"),
@@ -123,7 +123,7 @@ def read_rd(path):
     """"Return a list of resources from MEGAPEDE.RD."""
     # For details on the file format, see:
     #
-    # https://bitbucket.org/sopoforic/cgrr/wiki/Megapede RD File Format
+    # https://github.com/sopoforic/cgrr-megapede/wiki/Megapede-RD-File-Format
     MegapedeResource = namedtuple("MegapedeResource", ["size", "offset", "name"])
     resource_list = []
     if os.path.isfile(os.path.join(path, "MEGAPEDE.RD")):
