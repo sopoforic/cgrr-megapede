@@ -88,7 +88,7 @@ def export(path, format="html"):
 def verify(path):
     """Verify that the provided path is the supported game."""
     verified = any(
-        [cgrr.verify(identifying_files, path) for identifying_files
+        [cgrr.verify(id_files, path) for id_files
          in identifying_files]
     )
     return verified
@@ -96,8 +96,8 @@ def verify(path):
 def read_scores(path):
     """Return a list of scores."""
     scores = []
-    with open(os.path.join(path, scorefile), "rb") as scorefile:
-        for data in iter(lambda: scorefile.read(score_reader.struct.size), b""):
+    with open(os.path.join(path, scorefile), "rb") as infile:
+        for data in iter(lambda: infile.read(score_reader.struct.size), b""):
             scores.append(score_reader.unpack(data))
     return scores
 
