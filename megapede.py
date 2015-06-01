@@ -28,7 +28,7 @@ import cgrr
 from cgrr import File, FileReader, UnsupportedSoftwareException
 
 
-env = Environment(loader=FileSystemLoader('./formats'))
+env = Environment(loader=FileSystemLoader('.'))
 
 key = "cheesy_megapede_a"
 title = "Megapede"
