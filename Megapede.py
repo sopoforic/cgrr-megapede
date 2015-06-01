@@ -24,9 +24,8 @@ from collections import namedtuple
 from jinja2 import Environment, FileSystemLoader
 from PIL import Image
 
-import utilities
-from errors import UnsupportedSoftwareException
-from utilities import File, FileReader
+import cgrr
+from cgrr import File, FileReader, UnsupportedSoftwareException
 
 
 env = Environment(loader=FileSystemLoader('./formats'))
@@ -90,7 +89,7 @@ def export(path, format="html"):
 def verify(path):
     """Verify that the provided path is the supported game."""
     verified = any(
-        [utilities.verify(identifying_files, path) for identifying_files
+        [cgrr.verify(identifying_files, path) for identifying_files
          in identifying_files]
     )
     return verified
