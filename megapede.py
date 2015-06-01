@@ -75,7 +75,7 @@ def export(path, format="html"):
         raise UnsupportedSoftwareException
     global env
     if format == "html":
-        template = env.get_template('Megapede.html')
+        template = env.get_template('megapede.html')
     text = template.render({
         "key" : key,
         "title" : title,
