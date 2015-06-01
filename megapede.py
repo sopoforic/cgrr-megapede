@@ -73,7 +73,6 @@ def export(path, format="html"):
     """Export everything this class supports."""
     if not verify(path):
         raise UnsupportedSoftwareException
-    global env
     if format == "html":
         template = env.get_template('megapede.html')
     text = template.render({
@@ -82,7 +81,7 @@ def export(path, format="html"):
         "developer" : developer,
         "description" : description,
         "high_score_table" : read_scores(path),
-        "resources" : extract_rd(path),
+        "resources" : read_rd(path),
         })
     return text
 
