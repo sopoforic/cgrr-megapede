@@ -70,8 +70,6 @@ score_reader = FileReader(
 
 def export(path, format="html"):
     """Export everything this class supports."""
-    if not verify(path):
-        raise UnsupportedSoftwareException
     if format == "html":
         template = env.get_template('megapede.html')
     text = template.render({
