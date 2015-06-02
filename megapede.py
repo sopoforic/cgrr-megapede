@@ -56,7 +56,7 @@ scorefile = "MEGAPEDE.SCO"
 score_reader = FileReader(
     format = [
         ("name", "10s"),
-        ("padding", "x"), # Unknown meaning. Issue #1.
+        ("unknown", "b"), # Unknown meaning. Issue #1.
         ("score", "I"),
         ("level", "B"),
     ],
