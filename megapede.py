@@ -103,6 +103,13 @@ def parse_scores(data):
         scores.append(score_reader.unpack(data[i:i+score_reader.struct.size]))
     return scores
 
+def unparse_scores(scores):
+    """Return a bytestring representing a scorefile."""
+    bytestring = b""
+    for score in scores:
+        bytestring += score_reader.pack(score)
+    return bytestring
+
 def read_resources(path):
     """Return a dictionary containing resources from MEGAPEDE.RES.
 
