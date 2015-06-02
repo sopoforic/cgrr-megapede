@@ -92,10 +92,15 @@ def verify(path):
 
 def read_scores(path):
     """Return a list of scores."""
-    scores = []
     with open(os.path.join(path, scorefile), "rb") as infile:
-        for data in iter(lambda: infile.read(score_reader.struct.size), b""):
-            scores.append(score_reader.unpack(data))
+        data = infile.read()
+    return parse_scores(data)
+
+def parse_scores(data):
+    """Parse data from a scorefile into a list of scores."""
+    scores = []
+    for i in range(0, len(data), score_reader.struct.size):
+        scores.append(score_reader.unpack(data[i:i+score_reader.struct.size]))
     return scores
 
 def read_resources(path):
