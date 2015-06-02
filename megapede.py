@@ -24,7 +24,7 @@ from jinja2 import Environment, FileSystemLoader
 from PIL import Image
 
 import cgrr
-from cgrr import File, FileReader, UnsupportedSoftwareException
+from cgrr import File, FileReader
 
 
 env = Environment(loader=FileSystemLoader('.'))
